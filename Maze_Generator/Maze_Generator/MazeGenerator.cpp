@@ -24,7 +24,7 @@ struct point
 
 stack<Direction> Patch;
 
-point Digger;
+point Digger,Start,End;
 
 void Backtrack()
 {
@@ -50,7 +50,7 @@ void Backtrack()
 void SpawnDigger()
 {
 
-	srand(time(NULL));
+	//srand(time(NULL));
 
 	Digger.x = 2 * (rand() % CHAMBERS) + 1;
 	Digger.y = 2 * (rand() % CHAMBERS) + 1;
@@ -71,6 +71,77 @@ Direction ChooseDirection()
 
 	return (Direction)Dir;
 }
+
+void StartAndEnd()
+{
+	srand(time(NULL));
+
+	Direction Start=N,End=N;
+
+	while (Start==End)
+	{
+		Start = ChooseDirection();
+		End = ChooseDirection();
+	}
+
+	if (Start==N)
+	{
+		::Start = {2*(rand() % CHAMBERS) + 1, 0 };
+
+		if (End==S)
+		{
+			::End = { 2 * (rand() % CHAMBERS) + 1, grid_size - 1 };
+		}
+		else
+		{
+			::End = { (End == E) ? grid_size - 1 : 0, 2 * (rand() % (CHAMBERS / 2)) + CHAMBERS/2 + 1 };
+		}
+	}
+	else if (Start==E)
+	{
+		::Start = { grid_size - 1, 2 * (rand() % CHAMBERS) + 1};
+
+		if (End == W)
+		{
+			::End = { 0 , 2 * (rand() % CHAMBERS) + 1 };
+		}
+		else
+		{
+			::End = { 2 * (rand() % (CHAMBERS / 2)) + 1, (End == S) ? grid_size - 1 : 0 };
+		}
+	}
+	else if (Start == S)
+	{
+		::Start = { 2 * (rand() % CHAMBERS) + 1, grid_size - 1 };
+
+		if (End == N)
+		{
+			::End = { 2 * (rand() % CHAMBERS) + 1, 0 };
+		}
+		else
+		{
+			::End = { (End == E) ? grid_size - 1 : 0, 2 * (rand() % (CHAMBERS / 2)) + 1 };
+		}
+	}
+	else if (Start == W)
+	{
+		::Start = { 0, 2 * (rand() % CHAMBERS) + 1 };
+
+		if (End == E)
+		{
+			::End = { grid_size - 1, 2 * (rand() % CHAMBERS) + 1 };
+		}
+		else
+		{
+			::End = { 2 * (rand() % (CHAMBERS / 2)) + CHAMBERS / 2 + 1, (End==S)? grid_size-1 : 0 };
+		}
+	}
+
+	Maze[::Start.x][::Start.y] = true;
+	Maze[::End.x][::End.y] = true;
+
+}
+
 
 void ShowMaze()
 {
@@ -139,6 +210,7 @@ void Move()
 
 int main()
 {
+	StartAndEnd();
 	SpawnDigger();
 	Move();
 	ShowMaze();
